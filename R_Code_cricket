@@ -1,0 +1,395 @@
+
+
+
+# Read the data
+################################################
+# last modified on 12/10/2022 
+
+# The data matrix
+remove(list=ls())
+
+
+sehwag<-read.csv("sehwag.csv",header=T)
+sehwag$player<-"Sehwag"
+
+dravid<-read.csv("dravid.csv",header=T)
+dravid$player<-"Rahul Dravid"
+
+sachin<-read.csv("sachin.csv",header=T)
+sachin$player<-"Sachin Tendulkar"
+
+gavaskar<-read.csv("gavaskar.csv",header=T)
+gavaskar$player<-"Sunil Gavaskar"
+
+kapil<-read.csv("kapil.csv",header=T)
+kapil$player<-"Kapil Dev"
+
+gilchrist<-read.csv("gilchrist.csv",header=T)
+gilchrist$player<-"Gilchrist"
+
+border<-read.csv("border.csv",header=T)
+border$player<-"Allan Border"
+
+mark_waugh<-read.csv("mark_waugh.csv",header=T)
+mark_waugh$player<-"Mark Waugh"
+
+hayden<-read.csv("hayden.csv",header=T)
+hayden$player<-"Hayden"
+
+ponting<-read.csv("ponting.csv",header=T)
+ponting$player<-"Ricky Ponting"
+
+steve_waugh<-read.csv("steve_waugh.csv",header=T)
+steve_waugh$player<-"Steve Waugh"
+
+mccullom<-read.csv("mccullom.csv",header=T)
+mccullom$player<-"McCullom"
+
+crowe<-read.csv("crowe.csv",header=T)
+crowe$player<-"Crowe"
+
+fleming<-read.csv("fleming.csv",header=T)
+fleming$player<-"Stephen Fleming"
+
+inzamam<-read.csv("inzamam.csv",header=T)
+inzamam$player<-"Inzamam"
+
+miandad<-read.csv("miandad.csv",header=T)
+miandad$player<-"Javed Miandad"
+
+younis<-read.csv("younis.csv",header=T)
+younis$player<-"Younis Khan"
+
+abbas<-read.csv("abbas.csv",header=T)
+abbas$player<-"Zaheer Abbas"
+
+devilliers<-read.csv("devilliers.csv",header=T)
+devilliers$player<-"A B DeVilliers"
+
+smith<-read.csv("smith.csv",header=T)
+smith$player<-"Graeme Smith"
+
+kallis<-read.csv("kallis.csv",header=T)
+kallis$player<-"Kallis"
+
+desilva<-read.csv("desilva.csv",header=T)
+desilva$player<-"Aravinda De Silva"
+
+sangakkara<-read.csv("sangakkara.csv",header=T)
+sangakkara$player<-"Kumara Sangakkara"
+
+jayasuriya<-read.csv("jayasuriya.csv",header=T)
+jayasuriya$player<-"Sanath Jayasuriya"
+
+gayle<-read.csv("gayle.csv",header=T)
+gayle$player<-"Chris Gayle"
+
+lloyd<-read.csv("lloyd.csv",header=T)
+lloyd$player<-"Clive Lloyd"
+
+haynes<-read.csv("haynes.csv",header=T)
+haynes$player<-"Desmond Haynes"
+
+greenidge<-read.csv("greenidge.csv",header=T)
+greenidge$player<-"Gordon Greenidge"
+
+richards<-read.csv("richards.csv",header=T)
+richards$player<-"Vivian Richards"
+
+lara<-read.csv("lara.csv",header=T)
+lara$player<-"Brian Lara"
+
+gooch<-read.csv("gooch.csv",header=T)
+gooch$player<-"Graham Gooch"
+
+cook<-read.csv("cook.csv",header=T)
+cook$player<-"Alastair Cook"
+
+botham<-read.csv("botham.csv",header=T)
+botham$player<-"Ian Botham"
+
+atherton<-read.csv("atherton.csv",header=T)
+atherton$player<-"Michael Atherton"
+
+pietersen<-read.csv("pietersen.csv",header=T)
+pietersen$player<-"Kevin Pietersen"
+
+
+
+datamat<-data.frame(rbind(sehwag,sachin,dravid,gavaskar,
+                         kapil,gilchrist,border,mark_waugh,hayden,
+                         ponting,steve_waugh,mccullom,
+                         crowe,fleming,inzamam,miandad,
+                         younis,abbas,devilliers,
+                         smith,kallis,desilva,
+                         sangakkara,jayasuriya,
+                         gayle,lloyd,haynes,
+                         greenidge,richards,
+                         lara,gooch,cook,botham,
+                         atherton,pietersen))
+
+# get the unique scores
+
+score.sc<-datamat$score
+
+#score.sc<-(datamat$score-mean(datamat$score))/max(datamat$score) # Centred
+datamat<-data.frame(datamat,score.sc=score.sc)
+
+p=length(unique(datamat$player))  # number of individuals
+n<-nrow(datamat)
+
+set.seed(39042)
+sig <- 0.1
+
+uniq.player<-unique(as.character(datamat$player))
+uniq.player<-sort(uniq.player)
+
+# to get unique score
+for(i in 1:p) #gives unique score
+datamat$score.sc[(datamat$player==uniq.player[i])] <-(datamat$score.sc[(datamat$player==uniq.player[i])] + abs(rnorm(length(datamat$score.sc[(datamat$player==uniq.player[i])]),sd=sig)))
+
+datamat$score.sc
+
+# to get sorted score
+##############################################
+sort_score<-c(rep(0,p))
+for(i in 1:p)
+{
+  sort_score[i]<-list(order(datamat$score.sc[(as.character(datamat$player)==uniq.player[i])]))
+  datp<- datamat[(as.character(datamat$player)==uniq.player[i]),]
+  datamat[(as.character(datamat$player)==uniq.player[i]),]<-datp[sort_score[[i]],]
+
+}
+
+attach(datamat)
+
+len<-rep(0,p)	
+for(i in 1:p)
+len[i]<-length(score.sc[(datamat$player==uniq.player[i])])
+len
+n<-sum(len)
+n
+
+d1score<-list()
+d2score<-list()
+
+for(i in 1:p)
+d1score[i] <- list(datamat$score.sc[(datamat$player==uniq.player[i])][2:len[i]] - datamat$score.sc[(datamat$player==uniq.player[i])][1:(len[i]-1)])
+d1score
+#d1score<-unlist(d1score)
+d1score
+
+for(i in 1:p)
+d2score[i] <- list(datamat$score.sc[(datamat$player==uniq.player[i])][3:len[i]] - datamat$score.sc[(datamat$player==uniq.player[i])][1:(len[i]-2)])
+d2score
+#d2score<-unlist(d2score)
+d2score
+
+# to get the offset vector
+######################################
+o.vec<-list()
+for(i in 1:p)
+o.vec[i]<- list(d1score[[i]][-length(d1score[[i]])]  + ((len[i]-2):1)*d2score[[i]])
+o.vec
+
+new_o.vec<-list()
+for(i in 1:p)
+{
+new_o.vec[i]<-list(rep(0,len[i]))
+new_o.vec[i] <- list(c(2*datamat$score.sc[(datamat$player==uniq.player[i])][1]
++(len[i]-1)*(datamat$score.sc[(datamat$player==uniq.player[i])][1]+
+datamat$score.sc[(datamat$player==uniq.player[i])][2]),
+o.vec[[i]],d1score[[i]][length(d1score[[i]])]))
+}
+new_o.vec
+o.vec<-unlist(new_o.vec)
+o.vec
+
+o.vec <- log(o.vec/2)
+o.vec
+summary(o.vec)
+
+datamat<-data.frame(datamat,o.vec=o.vec)
+
+#########################################################
+
+## to get the knots
+
+library(SemiPar)
+#knots <- default.knots(datamat$score,num.knots=25)
+knots<-c(7.615385,15.230769,22.846154,30.461538,38.076923,45.692308,53.307692,
+          60.923077,68.538462,76.153846,83.769231,91.384615,99.000000,
+         106.615385,114.230769,121.846154,129.461538,139.076923,146.692308,
+         156.307692,164.923077,177.538462,193.153846,203.1856)
+
+#########################################################################################################
+# Using SemiPar
+#########################################################################################################
+library(SemiPar)
+
+#datamat$score.sc<-(datamat$score-mean(datamat$score))/max(datamat$score) # Centred
+
+spmfit<-list()
+playernames<-sort(unique(datamat$player))
+
+for(i in 1:p)
+{
+ dati<-datamat[(datamat$player==playernames[i]),]
+ #maxi<-max(dati$score.sc)
+ maxi<-150
+ knotsi<-knots[(knots<maxi)]
+
+ y<-dati$out
+ x<-dati$score.sc
+ oi<-dati$o.vec
+
+ spmfit[[i]] <- spm(y~f(x,adf=6,knots=knotsi)+offset(oi),family="poisson")
+}
+
+ par(mfrow=c(4,6))
+ for(i in 1:p)
+ plot(spmfit[[i]],main=playernames[i])
+
+# Regress residuals to get common components
+############################################
+
+yr1<-list()
+yr2<-list()
+er<-list()
+
+for(i in 1:p)
+{
+
+ dati<-datamat[(datamat$player==playernames[i]),]
+ y<-dati$out
+
+ yr1[[i]]<-spmfit[[i]]$fit$fitted
+ er[[i]]<-(y-yr1[[i]])
+#summary(yr1[[i]])
+#summary(er[[i]])
+
+ dati<-datamat[(datamat$player==playernames[i]),]
+ newdati <-data.frame(x=dati$score.sc)
+
+ predi<-rep(0,length(yr1[[i]]))
+
+ for(j in 1:p)
+ predi<-predi+exp(predict(spmfit[[j]],newdata=newdati))
+
+ predi<-predi/p
+
+ yr2[[i]]<-er[[i]]+predi
+ 
+}
+
+ yr<-unlist(yr2)
+ yr[(yr>2)]<-1
+
+ datamat<-data.frame(datamat,yr=yr)
+
+ library(nlme)
+ u<-rep(1,length(yr))
+
+ knotsyr <- default.knots(datamat$yr,num.knots=5)
+ Z<-outer(datamat$yr,knotsyr,"-")
+ Z<-Z*(Z>0)
+ #Z<-Z^3
+
+  glm1<-lme(yr~score,random=list(u=pdIdent(~Z-1),u=pdSymm(~score.sc)),data=datamat)
+  pred<-predict(glm1)
+ # pred<-pred-min(pred)
+   pred<-pred-1
+
+
+
+ inds<-list()
+ inds[[1]]<-(1:len[1])
+
+ for(i in 2:p)
+ inds[[i]]<-((cumsum(len))[i-1]):(((cumsum(len))[i-1])+len[i]-1)
+
+ spmnew<-list()
+  
+  for(i in c(1:p))
+ {
+  dati<-datamat[(datamat$player==playernames[i]),]
+  xi<-dati$score
+  fitval<-spmfit[[i]]$fit$fitted+pred[unlist(inds[i])]
+  fitval[(fitval<0)]<-0
+
+  spmnew[[i]]<-spm(fitval~f(xi,adf=9))
+ }
+
+
+ par(mfrow=c(4,6))
+ for(i in c(25:35))
+ {
+  plot(spmnew[[i]],main=playernames[i],ylim=c(0,0.16),xlab="Score",ylab="Hazard")
+ #plot(spmnew[[i]],main=playernames[i],xlab="Score",ylab="log-hazard")
+
+   dati<-datamat[(datamat$player==playernames[i]),]
+   newdati <-data.frame(xi=dati$score.sc)
+
+   predi<-rep(0,nrow(dati))
+
+   for(j in 1:p)
+   predi<-predi+exp(predict(spmnew[[j]],newdata=newdati))
+
+   predi<-predi/p
+   #predi<-predi-min(predi)
+
+  #points(newdati$xi,predi,type="l",col="red")
+  rug(newdati$xi)
+  }
+
+
+
+
+ #pdf(file="HazardPlots8.pdf",onefile=T)
+ par(mfrow=c(3,4))
+ for(i in c(1,3,5,7,9,11,12,13,17,20,21,22))
+ {
+  plot(spmnew[[i]],main=playernames[i],ylim=c(0,0.16),xlab="Score",ylab="Hazard")
+ #plot(spmnew[[i]],main=playernames[i],xlab="Score",ylab="log-hazard")
+
+   dati<-datamat[(datamat$player==playernames[i]),]
+   newdati <-data.frame(xi=dati$score.sc)
+
+   predi<-rep(0,nrow(dati))
+
+   for(j in 1:p)
+   predi<-predi+exp(predict(spmnew[[j]],newdata=newdati))
+
+   predi<-predi/p
+   #predi<-predi-min(predi)
+
+  #points(newdati$xi,predi,type="l",col="red")
+  rug(newdati$xi)
+  }
+
+ par(mfrow=c(3,4))
+ for(i in c(23,24,26:28,31:33))
+ {
+  plot(spmnew[[i]],main=playernames[i],ylim=c(0,0.16),xlab="Score",ylab="Hazard")
+ #plot(spmnew[[i]],main=playernames[i],xlab="Score",ylab="log-hazard")
+
+   dati<-datamat[(datamat$player==playernames[i]),]
+   newdati <-data.frame(xi=dati$score.sc)
+
+   predi<-rep(0,nrow(dati))
+
+   for(j in 1:p)
+   predi<-predi+exp(predict(spmnew[[j]],newdata=newdati))
+
+   predi<-predi/p
+   #predi<-predi-min(predi)
+
+  #points(newdati$xi,predi,type="l",col="red")
+  rug(newdati$xi)
+  }
+
+
+
+dev.off()
+
+par(mfrow=c(1,1))
